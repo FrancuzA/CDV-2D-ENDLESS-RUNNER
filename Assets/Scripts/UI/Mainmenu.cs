@@ -5,8 +5,6 @@ public class Mainmenu : MonoBehaviour
 {
     public GameObject scoreboardButton;
 
-
-
     private void Update()
     {
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.G))
