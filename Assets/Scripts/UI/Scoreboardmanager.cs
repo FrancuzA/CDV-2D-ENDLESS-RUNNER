@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Scoreboardmanager : MonoBehaviour
 {
     public GameObject addEntryPopUp;
     public GameObject entryPrefab;
-    public InputField nickField;
-    public InputField scoreField;
+    public GameObject Content;
+    public TMP_InputField nickField;
+    public TMP_InputField scoreField;
     public Button sendEntry;
     public Button addButton;
     public Button removeLastButton;
@@ -24,13 +27,16 @@ public class Scoreboardmanager : MonoBehaviour
 
     private void Start()
     {
+        nickField.onValueChanged.AddListener(SetNewNick);
         nickField.onSubmit.AddListener(SetNewNick);
         scoreField.onSubmit.AddListener(SetNewScore);
+        scoreField.onValueChanged.AddListener(SetNewScore);
         sendEntry.onClick.AddListener(TrySendEntry);
         addButton.onClick.AddListener(OpenEntryPopUp);
         removeLastButton.onClick.AddListener(ClearLastEntry);
         clearAllButton.onClick.AddListener(ClearWholeList);
     }
+
 
     public void OpenEntryPopUp()
     {
@@ -49,6 +55,13 @@ public class Scoreboardmanager : MonoBehaviour
 
     public void SetNewNick(string name)
     {
+        if (Contains(name))
+        {
+            nickField.textComponent.color = Color.red;
+            currentName = "";
+            return;
+        }
+        if(nickField.textComponent.color == Color.red) nickField.textComponent.color = Color.black;
         currentName = name;
     }
 
@@ -64,7 +77,7 @@ public class Scoreboardmanager : MonoBehaviour
 
         foreach (var entry in sortedList)
         {
-            var entryGO = Instantiate(entryPrefab, this.transform);
+            var entryGO = Instantiate(entryPrefab, Content.transform);
 
             EntryManager DataManger = entryGO.GetComponent<EntryManager>();
             DataManger?.SetData(entry.Key, entry.Value);
@@ -75,9 +88,13 @@ public class Scoreboardmanager : MonoBehaviour
     {
         if (currentName == null || currentScore == 0) return;
         AddEntry(currentName, currentScore);
+        nickField.text = "";
+        scoreField.text = "";
         lastEntry = currentName;
         addEntryPopUp.SetActive(false);
         ReloadEntrys();
+        currentName = null;
+        currentScore = 0;
     }
 
     private void AddEntry(string name, int score)
