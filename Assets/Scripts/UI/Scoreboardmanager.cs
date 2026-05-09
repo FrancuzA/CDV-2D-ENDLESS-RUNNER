@@ -82,6 +82,7 @@ public class Scoreboardmanager : MonoBehaviour
             EntryManager DataManger = entryGO.GetComponent<EntryManager>();
             DataManger?.SetData(entry.Key, entry.Value);
         }
+       // Content.transform.
     }
 
     public void TrySendEntry()
