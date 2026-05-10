@@ -46,11 +46,15 @@ public class Scoreboardmanager : MonoBehaviour
     public void ClearLastEntry()
     {
         Remove(lastEntry);
+        ReloadEntrys();
+
     }
 
     public void ClearWholeList()
     {
         Clear();
+        ReloadEntrys();
+
     }
 
     public void SetNewNick(string name)
@@ -67,14 +71,15 @@ public class Scoreboardmanager : MonoBehaviour
 
     public void SetNewScore(string score)
     {
-        currentScore = int.Parse(score);
+        if (int.TryParse(score, out int parsed))
+            currentScore = parsed;
     }
 
     public void ReloadEntrys()
     {
-        transform.DestroyAllChildren();
+        Content.transform.DestroyAllChildren();
+        if (scores.Count == 0) return;
         var sortedList = scores.OrderByDescending(entry => entry.Value).ToList();
-
         foreach (var entry in sortedList)
         {
             var entryGO = Instantiate(entryPrefab, Content.transform);
@@ -82,16 +87,16 @@ public class Scoreboardmanager : MonoBehaviour
             EntryManager DataManger = entryGO.GetComponent<EntryManager>();
             DataManger?.SetData(entry.Key, entry.Value);
         }
-       // Content.transform.
+        
     }
 
     public void TrySendEntry()
     {
         if (currentName == null || currentScore == 0) return;
         AddEntry(currentName, currentScore);
+        lastEntry = currentName;
         nickField.text = "";
         scoreField.text = "";
-        lastEntry = currentName;
         addEntryPopUp.SetActive(false);
         ReloadEntrys();
         currentName = null;

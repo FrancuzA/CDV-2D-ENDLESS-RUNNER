@@ -20,4 +20,10 @@ public static class ExtensionMethods
     }
 
     public static bool ToBool(this int value) => value == 1;
+
+    public static void SetHeight(this RectTransform rt, float height)
+        => rt.sizeDelta = new Vector2(rt.sizeDelta.x, height);
+
+    public static void SetWidth(this RectTransform rt, float width)
+        => rt.sizeDelta = new Vector2(width, rt.sizeDelta.y);
 }
